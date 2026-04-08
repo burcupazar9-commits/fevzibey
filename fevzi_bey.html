@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fevzi Bey – Yapay Zekâyla İşim Kolay</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --navy: #1a2a6c; --navy-dark: #0f1a45; --red: #c0392b; --gold: #f0c040; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, #0f1a45 0%, #1a2a6c 50%, #0f1a45 100%);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+  .container {
+    width: 100%; max-width: 700px; height: 96vh; max-height: 900px;
+    display: flex; flex-direction: column; border-radius: 24px; overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08);
+    position: relative; z-index: 1; animation: fadeUp 0.6s ease both;
+  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px);} to{opacity:1;transform:translateY(0);} }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0f1a45, #1a2a6c);
+    padding: 14px 20px 12px; display: flex; align-items: center; gap: 12px;
+    border-bottom: 2px solid var(--red); flex-shrink: 0;
+  }
+  .logo-cluster { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .wise-avatar {
+    width:54px; height:54px; border-radius:50%;
+    background: linear-gradient(160deg, #e8f0fe, #c5d5f8);
+    border:2.5px solid rgba(240,192,64,0.6);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; overflow:hidden; box-shadow:0 4px 14px rgba(0,0,0,0.4);
+  }
+  .wise-avatar svg { width:48px; height:48px; }
+  .tubitak-badge {
+    width:42px; height:42px; border-radius:10px; background:white;
+    display:flex; align-items:center; justify-content:center;
+    font-size:9px; font-weight:800; color:var(--red);
+    line-height:1.1; text-align:center; padding:4px; flex-shrink:0;
+    box-shadow:0 4px 12px rgba(0,0,0,0.3);
+  }
+  .header-info { flex:1; min-width:0; }
+  .header-title { font-family:'Baloo 2',cursive; font-size:20px; font-weight:700; color:white; line-height:1.1; }
+  .header-title span { color:var(--gold); }
+  .header-sub { font-size:11px; color:rgba(255,255,255,0.6); margin-top:2px; }
+  .online-dot {
+    display:inline-block; width:7px; height:7px; border-radius:50%;
+    background:#2ecc71; margin-right:5px; animation:pulse-dot 2s infinite;
+  }
+  @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.6;transform:scale(0.8);} }
+  .project-tag {
+    background:rgba(192,57,43,0.25); border:1px solid rgba(192,57,43,0.5);
+    color:#f5a899; font-size:10px; font-weight:700;
+    padding:3px 8px; border-radius:20px; white-space:nowrap;
+  }
+
+  /* BANNER */
+  .banner {
+    background: #1a2a6c; padding: 8px 18px;
+    text-align: center; font-size: 13px; font-weight: 600;
+    color: rgba(255,255,255,0.85); flex-shrink: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  /* MOD & UZUNLUK */
+  .controls {
+    background: white; padding: 9px 16px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid #e0e6f5; flex-shrink: 0; flex-wrap: wrap;
+  }
+  .controls-label { font-size:11px; font-weight:700; color:#8899cc; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
+  .mode-group, .length-group { display:flex; gap:4px; }
+  .mode-btn {
+    font-family:'Nunito',sans-serif; font-size:11px; font-weight:700;
+    padding:5px 10px; border-radius:14px; border:1.5px solid #c5ceee;
+    background:white; color:#8899cc; cursor:pointer; transition:all 0.2s; white-space:nowrap;
+  }
+  .mode-btn.active { background:#1a2a6c; color:white; border-color:#1a2a6c; }
+  .mode-btn:hover:not(.active) { border-color:#1a2a6c; color:#1a2a6c; }
+  .divider { width:1px; height:20px; background:#e0e6f5; flex-shrink:0; }
+  .len-btn {
+    font-family:'Nunito',sans-serif; font-size:11px; font-weight:700;
+    padding:5px 10px; border-radius:14px; border:1.5px solid #c5ceee;
+    background:white; color:#8899cc; cursor:pointer; transition:all 0.2s; white-space:nowrap;
+  }
+  .len-btn.active { background:#c0392b; color:white; border-color:#c0392b; }
+  .len-btn:hover:not(.active) { border-color:#c0392b; color:#c0392b; }
+
+  /* ARAÇLAR KÜTÜPHANESİ */
+  .library-wrap { padding: 8px 16px 0; background: #f0f4ff; flex-shrink: 0; }
+  .library-main-btn {
+    width: 100%; background: white; border: 1.5px solid #1a2a6c;
+    color: #1a2a6c; border-radius: 14px; padding: 9px 14px;
+    font-family:'Nunito',sans-serif; font-weight: 700; font-size:13px;
+    cursor: pointer; transition: all 0.2s; display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .library-main-btn:hover { background:#1a2a6c; color:white; }
+  .library-main-btn.open { background:#1a2a6c; color:white; border-radius:14px 14px 0 0; }
+
+  .library-panel {
+    background: white; border-radius: 0 0 14px 14px;
+    border: 1.5px solid #1a2a6c; border-top: none;
+    padding: 12px; display:none; max-height: 320px; overflow-y:auto;
+  }
+  .library-panel.open { display:block; }
+  .library-panel::-webkit-scrollbar{width:4px;}
+  .library-panel::-webkit-scrollbar-thumb{background:#c0c8e8;border-radius:2px;}
+
+  .library-tabs { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:10px; }
+  .lib-tab {
+    font-family:'Nunito',sans-serif; background:#eef2ff; border:1px solid #c5ceee;
+    color:#1a2a6c; border-radius:999px; padding:5px 12px;
+    cursor:pointer; font-size:12px; font-weight:700; transition:all 0.2s;
+  }
+  .lib-tab.active { background:#1a2a6c; color:white; border-color:#1a2a6c; }
+
+  .tool-card { margin-bottom:8px; border:1px solid #e3e8f5; border-radius:12px; overflow:hidden; }
+  .tool-title {
+    width:100%; text-align:left; background:#f8faff; border:none;
+    padding:11px 14px; font-family:'Nunito',sans-serif; font-weight:800;
+    color:#1a2a6c; cursor:pointer; transition:background 0.2s;
+  }
+  .tool-title:hover { background:#eef2ff; }
+  .tool-title span { display:block; font-size:12px; font-weight:600; color:#6b769c; margin-top:2px; }
+  .tool-detail {
+    padding:12px 14px; font-size:13px; line-height:1.7;
+    background:white; border-top:1px solid #eef2ff;
+    display:none;
+  }
+  .tool-detail.open { display:block; }
+  .tool-detail p { margin-bottom:5px; }
+  .tool-detail strong { color:#1a2a6c; }
+
+  /* MESSAGES */
+  .messages {
+    flex:1; overflow-y:auto; padding:16px 16px;
+    display:flex; flex-direction:column; gap:12px; background:#f0f4ff;
+  }
+  .messages::-webkit-scrollbar{width:4px;}
+  .messages::-webkit-scrollbar-thumb{background:#c0c8e8;border-radius:2px;}
+  .msg { display:flex; gap:10px; align-items:flex-end; animation:msgIn 0.3s ease both; }
+  @keyframes msgIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+  .msg.user{flex-direction:row-reverse;}
+  .bot-avatar-sm {
+    width:34px; height:34px; border-radius:50%;
+    background:linear-gradient(160deg,#e8f0fe,#c5d5f8);
+    border:1.5px solid rgba(240,192,64,0.5);
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; overflow:hidden;
+  }
+  .bot-avatar-sm svg{width:30px;height:30px;}
+  .bot-msg-wrap { display:flex; flex-direction:column; align-items:flex-start; max-width:76%; }
+  .mode-badge {
+    font-size:10px; font-weight:700; padding:2px 7px; border-radius:8px;
+    margin-bottom:3px; display:inline-block;
+  }
+  .mode-badge.student { background:#e8f0fe; color:#1a2a6c; }
+  .mode-badge.teacher { background:#fef3e2; color:#b7600a; }
+  .mode-badge.quick   { background:#e8faf0; color:#0a7a3a; }
+  .bubble { padding:10px 14px; border-radius:18px; font-size:14px; line-height:1.6; }
+  .msg.bot .bubble {
+    background:white; color:#1a2a6c; border-bottom-left-radius:4px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  }
+  .msg.user .bubble {
+    background:linear-gradient(135deg,#1a2a6c,#2a3f8f);
+    color:white; border-bottom-right-radius:4px; max-width:76%;
+  }
+
+  /* TYPING */
+  .typing-wrap{display:flex;gap:10px;align-items:flex-end;}
+  .typing-bubble {
+    background:white; border-radius:18px; border-bottom-left-radius:4px;
+    padding:12px 16px; display:flex; gap:5px; align-items:center;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  }
+  .typing-bubble span { width:8px;height:8px;border-radius:50%;background:#8899cc;animation:bounce 1.2s infinite; }
+  .typing-bubble span:nth-child(2){animation-delay:0.2s;}
+  .typing-bubble span:nth-child(3){animation-delay:0.4s;}
+  @keyframes bounce { 0%,80%,100%{transform:translateY(0);opacity:0.4;} 40%{transform:translateY(-6px);opacity:1;} }
+
+  /* QUICK BUTTONS */
+  .quick-section { padding:8px 14px 0; background:#f0f4ff; display:flex; flex-wrap:wrap; gap:6px; }
+  .quick-btn {
+    font-family:'Nunito',sans-serif; font-size:11.5px; font-weight:600;
+    padding:6px 11px; border-radius:20px; border:1.5px solid #1a2a6c;
+    background:white; color:#1a2a6c; cursor:pointer; transition:all 0.2s; line-height:1.3;
+  }
+  .quick-btn:hover{background:#1a2a6c;color:white;transform:translateY(-1px);}
+
+  /* INPUT */
+  .input-row {
+    background:white; padding:12px 16px; display:flex; gap:10px;
+    align-items:center; border-top:1px solid #e0e6f5; flex-shrink:0;
+  }
+  .input-box {
+    flex:1; font-family:'Nunito',sans-serif; font-size:14px;
+    padding:10px 16px; border-radius:22px; border:1.5px solid #c5ceee;
+    background:#f5f7ff; color:#1a2a6c; outline:none; transition:border-color 0.2s;
+  }
+  .input-box:focus{border-color:#1a2a6c;background:white;}
+  .input-box::placeholder{color:#aab0cc;}
+  .input-box:disabled{background:#f0f0f0;color:#999;}
+  .send-btn {
+    width:44px;height:44px;border-radius:50%;border:none;
+    background:linear-gradient(135deg,#1a2a6c,#c0392b);
+    color:white;font-size:18px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:transform 0.2s, opacity 0.2s;flex-shrink:0;
+  }
+  .send-btn:hover:not(:disabled){transform:scale(1.08);}
+  .send-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+  /* FOOTER */
+  .footer {
+    background:#0f1a45;padding:6px 16px;text-align:center;
+    font-size:10px;color:rgba(255,255,255,0.4);flex-shrink:0;
+  }
+  .footer span{color:rgba(255,255,255,0.65);}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-cluster">
+      <div class="wise-avatar">
+        <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="25" cy="25" r="25" fill="#dbeafe"/>
+          <ellipse cx="25" cy="13" rx="11" ry="8" fill="#2c1810"/>
+          <rect x="14" y="13" width="22" height="5" fill="#2c1810"/>
+          <ellipse cx="25" cy="22" rx="10" ry="11" fill="#FDDBB4"/>
+          <ellipse cx="15" cy="22" rx="2" ry="3" fill="#FDDBB4"/>
+          <ellipse cx="35" cy="22" rx="2" ry="3" fill="#FDDBB4"/>
+          <path d="M18 17 Q21 15.5 24 17" stroke="#2c1810" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+          <path d="M26 17 Q29 15.5 32 17" stroke="#2c1810" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+          <ellipse cx="21" cy="20" rx="2" ry="2.2" fill="#1a1a2e"/>
+          <ellipse cx="29" cy="20" rx="2" ry="2.2" fill="#1a1a2e"/>
+          <circle cx="21.7" cy="19.3" r="0.7" fill="white"/>
+          <circle cx="29.7" cy="19.3" r="0.7" fill="white"/>
+          <rect x="17" y="17.5" width="8" height="5.5" rx="1.5" fill="none" stroke="#1a2a6c" stroke-width="1.5"/>
+          <rect x="25" y="17.5" width="8" height="5.5" rx="1.5" fill="none" stroke="#1a2a6c" stroke-width="1.5"/>
+          <line x1="17" y1="20" x2="15" y2="20" stroke="#1a2a6c" stroke-width="1.2"/>
+          <line x1="33" y1="20" x2="35" y2="20" stroke="#1a2a6c" stroke-width="1.2"/>
+          <path d="M24 24 Q25 26 26 24" stroke="#e0a870" stroke-width="1" fill="none"/>
+          <path d="M20 28 Q25 31.5 30 28" stroke="#c07840" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+          <rect x="22" y="32" width="6" height="4" fill="#FDDBB4"/>
+          <path d="M10 50 Q10 37 25 35 Q40 37 40 50 Z" fill="#1a2a6c"/>
+          <path d="M22 35 L25 40 L28 35" fill="white"/>
+          <path d="M25 35 L23.5 37 L25 44 L26.5 37 Z" fill="#c0392b"/>
+          <ellipse cx="25" cy="35.5" rx="1.5" ry="1" fill="#e74c3c"/>
+          <path d="M18 35 L22 35 L25 40 L20 50" fill="#152255"/>
+          <path d="M32 35 L28 35 L25 40 L30 50" fill="#152255"/>
+        </svg>
+      </div>
+      <div class="tubitak-badge">4006<br>TÜBİTAK</div>
+    </div>
+    <div class="header-info">
+      <div class="header-title">Fevzi <span>Bey</span></div>
+      <div class="header-sub"><span class="online-dot"></span>Yapay Zekâyla İşim Kolay – Bilim Fuarı Asistanı</div>
+    </div>
+    <div class="project-tag">13-14 MAYIS 2026</div>
+  </div>
+
+  <!-- BANNER -->
+  <div class="banner">😊 Sana nasıl yardımcı olabilirim?</div>
+
+  <!-- MOD & UZUNLUK -->
+  <div class="controls">
+    <span class="controls-label">Mod:</span>
+    <div class="mode-group">
+      <button class="mode-btn active" id="btn-student" onclick="setMode('student')">🎒 Öğrenci</button>
+      <button class="mode-btn" id="btn-teacher" onclick="setMode('teacher')">📖 Öğretmen</button>
+      <button class="mode-btn" id="btn-quick" onclick="setMode('quick')">⚡ Hızlı</button>
+    </div>
+    <div class="divider"></div>
+    <span class="controls-label">Cevap:</span>
+    <div class="length-group">
+      <button class="len-btn active" id="btn-short" onclick="setLength('short')">Kısa</button>
+      <button class="len-btn" id="btn-long" onclick="setLength('long')">Detaylı</button>
+    </div>
+  </div>
+
+  <!-- ARAÇLAR KÜTÜPHANESİ -->
+  <div class="library-wrap">
+    <button class="library-main-btn" id="libMainBtn" onclick="toggleLibrary()">
+      🧰 Hangi araçlar incelendi?
+    </button>
+    <div class="library-panel" id="libraryPanel">
+      <div class="library-tabs" id="libTabs"></div>
+      <div id="toolCards"></div>
+    </div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="messages" id="msgs"></div>
+
+  <!-- QUICK BUTTONS -->
+  <div class="quick-section" id="quickSection">
+    <button class="quick-btn" onclick="quickAsk('İngilizce öğrenmek için hangi yapay zekâ araçları daha iyi?')">🌍 İngilizce için hangi araç?</button>
+    <button class="quick-btn" onclick="quickAsk('Matematikte yapay zekâyı nasıl doğru kullanabilirim?')">📐 Matematikte doğru kullanım</button>
+    <button class="quick-btn" onclick="quickAsk('Ödevimi yapmadan yapay zekâdan nasıl yardım alabilirim?')">📚 Ödevde nasıl yardım alırım?</button>
+    <button class="quick-btn" onclick="quickAsk('Sunum hazırlamak için Gamma gerçekten iyi mi?')">🎤 Gamma işe yarıyor mu?</button>
+    <button class="quick-btn" onclick="quickAsk('Müzik dersim için Suno nasıl kullanılır?')">🎵 Suno nasıl kullanılır?</button>
+    <button class="quick-btn" onclick="quickAsk('Canva mı DALL·E mi daha mantıklı?')">🎨 Canva mı DALL·E mi?</button>
+  </div>
+
+  <!-- INPUT -->
+  <div class="input-row">
+    <input class="input-box" id="inp" type="text"
+      placeholder="Bir ders seçebilir ya da sorunu doğrudan yazabilirsin..."
+      onkeydown="if(event.key==='Enter') sendMsg()" />
+    <button class="send-btn" id="sendBtn" onclick="sendMsg()">➤</button>
+  </div>
+
+  <div class="footer">
+    <span>Fevzipaşa Ortaokulu</span> · Danışman: Burcu Pazar · Öğrenciler: Ebral & Ceylin · Müdür: Ertuğrul Malkoç
+  </div>
+</div>
+
+<script>
+// ===================== ARAÇLAR VERİTABANI =====================
+const TOOLS_DB = {
+  odev: [
+    { name:"ChatGPT", short:"Konu anlatımı ve ödev desteği",
+      pros:["Kişiselleştirilmiş anlatım","Hızlı geri bildirim","Soru sorarak öğrenme"],
+      cons:["Kopyaya kayma riski","Yanlış bilgi verebilir","Düşünmeden kullanılırsa yüzeyselleştirir"],
+      access:"Ücretsiz sürüm var, ücretli Plus sürümü de bulunur.",
+      usage:["Konu özetletme","Adım adım çözüm isteme","Kısa test hazırlatma"] },
+    { name:"Claude", short:"Metin analizi ve açıklayıcı geri bildirim",
+      pros:["Uzun metinlerde güçlü","Yazı düzeltmede iyi","Daha düzenli ve güvenli cevaplar"],
+      cons:["Konuşma pratiğinde sınırlı","Bazen fazla uzun cevap verebilir"],
+      access:"Ücretsiz sürüm var, Pro sürüm bulunur.",
+      usage:["Kompozisyon geri bildirimi","Paragraf düzeltme","Hata açıklatma"] },
+    { name:"Gemini", short:"Araştırma ve örnek üretme",
+      pros:["Hızlı cevap","Örnek cümle üretme","Google ekosistemiyle uyum"],
+      cons:["Bazen yüzeysel kalır","Derinlik eksik olabilir"],
+      access:"Ücretsiz sürüm mevcut.",
+      usage:["Kelime açıklatma","Örnek cümle bulma","Kısa konu özeti alma"] },
+    { name:"DeepSeek", short:"Matematik ve mantık soruları",
+      pros:["Matematikte güçlü","Hızlı teknik cevaplar","Alternatif model deneyimi"],
+      cons:["Pedagojik yönlendirme zayıf","Güvenilirlik tartışmalı"],
+      access:"Genelde ücretsiz veya düşük maliyetli.",
+      usage:["Matematik adım adım çözüm","Mantık soruları","Algoritma fikri"] },
+    { name:"NotebookLM", short:"Kaynak üzerinden analiz ve özet",
+      pros:["Belge üzerinden çalışır","Akademik düzen sağlar","PDF özeti"],
+      cons:["Pasif kullanılırsa yüzeyselleşir","Tek başına öğretmez"],
+      access:"Google hesabıyla erişilebilir, ücretsiz.",
+      usage:["PDF özetleme","Kaynak karşılaştırma","Araştırma notu çıkarma"] }
+  ],
+  dil: [
+    { name:"Duolingo", short:"Oyunlaştırılmış dil öğrenme",
+      pros:["Alışkanlık kazandırır","Motivasyon yüksek","Kolay erişim"],
+      cons:["Yüzeysel öğrenme","Gerçek konuşma için yetmez"],
+      access:"Ücretsiz, Premium sürümü de var.",
+      usage:["Günlük tekrar","Kelime alışkanlığı","Başlangıç seviye"] },
+    { name:"Busuu", short:"Gerçek yaşam dili ve kalıplar",
+      pros:["Deyim ve gerçek kalıplar","Writing ve speaking","Daha doğal dil"],
+      cons:["Premium kısıtı var","Süreklilik gerektirir"],
+      access:"Ücretsiz sürüm sınırlı, Premium daha güçlü.",
+      usage:["Gerçek kalıp öğrenme","Yazma alıştırması","Konuşma temelli öğrenme"] },
+    { name:"ELSA Speak", short:"Telaffuz geliştirme AI",
+      pros:["Telaffuz analizi","Bireysel geri bildirim","Aksan farkındalığı"],
+      cons:["Dar kapsamlı","Tek başına yeterli değil"],
+      access:"Ücretsiz ve premium seçenekleri var.",
+      usage:["Kelime telaffuzu","Cümle tekrarları","Konuşma doğruluğu"] },
+    { name:"Grammarly", short:"Yazma düzelticisi",
+      pros:["Hızlı düzeltme","Net geri bildirim","Hata farkındalığı"],
+      cons:["Bağımlılık riski","Açıklama eksikliği olabilir"],
+      access:"Ücretsiz temel sürüm, Premium daha güçlü.",
+      usage:["Kompozisyon düzeltme","Dilbilgisi kontrolü","E-posta yazma"] },
+    { name:"EWA English", short:"Film sahneleriyle öğrenme",
+      pros:["Bağlam içinde öğrenme","İlgi çekici","Gerçek diyaloglar"],
+      cons:["Eğlenceye kayabilir","Sistematik ilerleme zayıf"],
+      access:"Ücretsiz içerikler sınırlı, Premium var.",
+      usage:["Kalıp öğrenme","Dinleme pratiği","Film sahnesi üzerinden anlam"] }
+  ],
+  tasarim: [
+    { name:"Canva AI", short:"Kolay tasarım ve sunum",
+      pros:["Çok erişilebilir","Hazır şablonlar","Hızlı üretim"],
+      cons:["Özgünlük düşebilir","Herkes benzer tasarım yapar"],
+      access:"Ücretsiz sürüm güçlü, Pro daha geniş.",
+      usage:["Poster","Broşür","Sunum tasarlama"] },
+    { name:"DALL·E", short:"Metinden görsel üretme",
+      pros:["Özgün görsel üretir","Yaratıcılığı destekler","Hızlı sonuç"],
+      cons:["Tutarsız sonuçlar olabilir","İyi prompt ister"],
+      access:"Kullanıma göre değişir, sınırlı ücretsiz.",
+      usage:["Kavram görselleştirme","Poster görseli","Karakter tasarlama"] },
+    { name:"Adobe Firefly", short:"Telif güvenli profesyonel tasarım",
+      pros:["Telif güvenli içerik","Düzenleme güçlü","Adobe ile entegrasyon"],
+      cons:["Öğrenme eğrisi var","Başlangıç için zor"],
+      access:"Ücretsiz / Adobe abonelik.",
+      usage:["Profesyonel görsel","Fotoğraf düzenleme","Vektör üretimi"] },
+    { name:"Leonardo AI", short:"Karakter ve sahne tasarımı",
+      pros:["Yüksek kalite","Karakter ve sahne tasarımında güçlü","Detaylı kontrol"],
+      cons:["Başlangıç için biraz karışık","Ayarlar fazla gelebilir"],
+      access:"Ücretsiz kredi sistemi, Premium seçenekleri var.",
+      usage:["Karakter tasarımı","Oyun tarzı sahneler","İllüstrasyon"] }
+  ],
+  kodlama: [
+    { name:"Replit AI", short:"Tarayıcıdan kodlama",
+      pros:["Kurulum gerektirmez","Başlangıç için çok uygun","Tarayıcıdan çalışır"],
+      cons:["Mantık yerine sonuca odaklanma riski","Hazır üretim hissi"],
+      access:"Temel kullanım ücretsiz.",
+      usage:["Mini web sayfası","Basit oyun","Kod denemeleri"] },
+    { name:"GitHub Copilot", short:"Kod yazarken yardımcı AI",
+      pros:["Gerçek geliştirici deneyimi","Kod tamamlama","Örnek üretme"],
+      cons:["Kopyala-yapıştır öğrenme riski","Ortam kurmak gerekebilir"],
+      access:"Öğrenci ve öğretmene özel ücretsiz erişim.",
+      usage:["Kod önerisi","Fonksiyon yazdırma","Kod açıklatma"] },
+    { name:"Claude", short:"Kod açıklama ve öğretme",
+      pros:["Kodu detaylı açıklar","Mantığı öğretir","Pedagojik en güçlü"],
+      cons:["Gerçek editör değil","Kod çalıştırmaz"],
+      access:"Ücretsiz sürüm var.",
+      usage:["Kod mantığını anlama","Hata açıklatma","Algoritma fikri"] },
+    { name:"Gemini Canvas", short:"Doğal dille prototip üretme",
+      pros:["Psikolojik eşiği düşürür","Doğal dille kullanım","Hızlı prototip"],
+      cons:["Derin geliştirme ortamı değil","Kararlılık sorunları olabilir"],
+      access:"Gemini üzerinden erişim, ücretsiz.",
+      usage:["Basit HTML üretme","Kod düzeltme","Mini araç geliştirme"] }
+  ],
+  muzik: [
+    { name:"Suno", short:"Metinden şarkı üretme",
+      pros:["Çok hızlı","Tam şarkı üretir","İlham verici"],
+      cons:["Ruhsuz bulunabilir","Telif tartışmaları var"],
+      access:"Ücretsiz kredi sistemi, ücretli planlar da var.",
+      usage:["Şarkı fikri","Tema müziği","Deneysel beste"] },
+    { name:"BandLab", short:"Tarayıcıdan müzik üretimi",
+      pros:["Tamamen ücretsiz","Kayıt ve düzenleme","İşbirliği imkânı"],
+      cons:["Biraz öğrenme eğrisi var"],
+      access:"Ücretsiz kullanım güçlü.",
+      usage:["Şarkı kaydı","Ses düzenleme","Müzik projesi"] },
+    { name:"ElevenLabs", short:"Gerçekçi seslendirme AI",
+      pros:["Çok gerçekçi ses","Çok dil desteği","Hızlı üretim"],
+      cons:["Kötüye kullanım riski","Ücretli plan kısıtları"],
+      access:"Ücretsiz sınırlı, ücretli planlar var.",
+      usage:["Podcast seslendirme","Hikaye anlatımı","İçerik sesi"] },
+    { name:"CapCut AI", short:"Kolay video ve içerik düzenleme",
+      pros:["Çok kolay kullanım","AI altyazı","Hızlı edit"],
+      cons:["Fazla hazır hissettirebilir","Özgünlük düşük olabilir"],
+      access:"Ücretsiz sürüm var, Pro seçenekleri olabilir.",
+      usage:["Video düzenleme","Kısa içerik","Sunum videosu"] }
+  ],
+  planlama: [
+    { name:"Notion", short:"Planlama ve görev yönetimi",
+      pros:["Düzen sağlar","Görev takibi","Not tutma"],
+      cons:["İlk başta karmaşık gelebilir","Aşırı detayda kaybolunabilir"],
+      access:"Ücretsiz sürüm güçlü.",
+      usage:["Ders planı","Haftalık hedefler","Görev listesi"] },
+    { name:"Gamma", short:"Hızlı sunum oluşturma",
+      pros:["Çok hızlı sunum üretir","Görsel olarak temiz","1 prompt → sunum"],
+      cons:["İçerik öğrenilmeden sunum hazırlanabilir","Sunum yapmak ≠ öğrenmek"],
+      access:"Ücretsiz ve ücretli seçenekler.",
+      usage:["Sunum hazırlama","Bilgiyi düzenleme","Başlık yapısı kurma"] },
+    { name:"NotebookLM", short:"Kaynaklardan özet ve analiz",
+      pros:["Belge üzerinden çalışır","Akademik düzen sağlar","PDF analizi"],
+      cons:["Pasif kullanılırsa yüzeyselleşir"],
+      access:"Google hesabıyla erişilebilir, ücretsiz.",
+      usage:["PDF özetleme","Kaynak karşılaştırma","Araştırma notu"] }
+  ]
+};
+
+const CAT_LABELS = {
+  odev:'📚 Ödev', dil:'🌍 Dil', tasarim:'🎨 Tasarım',
+  kodlama:'💻 Kodlama', muzik:'🎵 Müzik', planlama:'📋 Planlama'
+};
+
+// ===================== ARAÇ KÜTÜPHANESİ =====================
+let libraryOpen = false;
+let activeCategory = 'odev';
+
+function toggleLibrary() {
+  libraryOpen = !libraryOpen;
+  const panel = document.getElementById('libraryPanel');
+  const btn = document.getElementById('libMainBtn');
+  panel.classList.toggle('open', libraryOpen);
+  btn.classList.toggle('open', libraryOpen);
+  btn.textContent = libraryOpen ? '✕ Kütüphaneyi Kapat' : '🧰 Hangi araçlar incelendi?';
+  if (libraryOpen) {
+    renderTabs();
+    renderCategory(activeCategory);
+  }
+}
+
+function renderTabs() {
+  const tabsEl = document.getElementById('libTabs');
+  tabsEl.innerHTML = Object.entries(CAT_LABELS).map(([key, label]) =>
+    `<button class="lib-tab ${key === activeCategory ? 'active' : ''}" onclick="selectCategory('${key}')">${label}</button>`
+  ).join('');
+}
+
+function selectCategory(cat) {
+  activeCategory = cat;
+  renderTabs();
+  renderCategory(cat);
+}
+
+function renderCategory(cat) {
+  const tools = TOOLS_DB[cat] || [];
+  document.getElementById('toolCards').innerHTML = tools.map((tool, i) => `
+    <div class="tool-card">
+      <button class="tool-title" onclick="toggleDetail('${cat}-${i}')">
+        ${tool.name}
+        <span>${tool.short}</span>
+      </button>
+      <div class="tool-detail" id="${cat}-${i}">
+        <p><strong>✅ Artıları:</strong> ${tool.pros.join(' · ')}</p>
+        <p><strong>❌ Eksileri:</strong> ${tool.cons.join(' · ')}</p>
+        <p><strong>💰 Erişim:</strong> ${tool.access}</p>
+        <p><strong>🎯 Ne için kullanılır:</strong> ${tool.usage.join(' · ')}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleDetail(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+// ===================== MOD & UZUNLUK =====================
+let currentMode = 'student';
+let currentLength = 'short';
+
+function setMode(mode) {
+  currentMode = mode;
+  ['student','teacher','quick'].forEach(m =>
+    document.getElementById('btn-'+m).classList.toggle('active', m === mode)
+  );
+}
+
+function setLength(len) {
+  currentLength = len;
+  ['short','long'].forEach(l =>
+    document.getElementById('btn-'+l).classList.toggle('active', l === len)
+  );
+}
+
+// ===================== SİSTEM PROMPT =====================
+function buildSystem() {
+  const modeInstructions = {
+    student: `ÖĞRENCİ MODU: Sıcak, samimi, konuşur gibi konuş. Teknik ama anlaşılır. Biraz espri olabilir ama asla aşağılayıcı değil. "Tamam, bunu kolayca anlatalım." / "Asıl mantık şu..." tarzında.`,
+    teacher: `ÖĞRETMEN MODU: Yapılandırılmış, akademik ve açıklayıcı konuş. "Bu sorunun kısa cevabı şu:" / "Bunu üç adımda açıklayayım:" tarzında. Kaynak atıflarını belirgin kullan.`,
+    quick: `HIZLI YARDIM MODU: Maksimum 1-2 cümle. Sadece özü ver. Açıklama yok, örnek yok.`
+  };
+  const lengthInstruction = currentLength === 'short'
+    ? 'CEVAP UZUNLUĞU: Kısa ve öz. 2-3 cümle yeterli.'
+    : 'CEVAP UZUNLUĞU: Detaylı açıkla. Adımlar, örnekler, kaynak atıfları kullan.';
+
+  return `Sen Fevzi Bey'sin — Fevzipaşa Ortaokulu'nun "Yapay Zekâyla İşim Kolay" TÜBİTAK 4006 Bilim Fuarı projesinin yapay zekâ asistanısın.
+
+AKTIF MOD: ${modeInstructions[currentMode]}
+${lengthInstruction}
+
+KİŞİLİĞİN: Ödev yapmak yerine öğrenciye öğretmeye yönlendirirsin. Esprin olur ama asla aşağılayıcı değil. Temel prensip: "Yapay zekâ öğrenmeyi kolaylaştırır, ama öğrenmenin yerini alamaz."
+
+KAYNAKLAR (doğal atıf yap):
+- MEB YEĞİTEK (2024): Eğitimde Kullanılan Yapay Zekâ Araçları El Kitabı
+- Bayraktar vd. (2023): Yapay Zekâ Teknolojilerinin Eğitimde Kullanımına Yönelik Öğretmen Görüşleri
+- Ebral & Ceylin'in araştırması (2026): Kullanıcı yorumları, doğru/yanlış kullanım
+- TÜBİTAK 4006 Proje Başvurusu (2025)
+
+PROJE:
+- "Yapay Zekâyla İşim Kolay" — TÜBİTAK 4006, Fevzipaşa Ortaokulu, Söke/Aydın
+- Danışman: Burcu Pazar | Öğrenciler: Ebral & Ceylin (8. sınıf)
+- Müdür: Ertuğrul Malkoç | Müdür Yrd: Nazlı Can Bolkent | Fuar: 13-14 Mayıs 2026
+
+BİLMEDİĞİN KONULAR: "Dürüst olayım — Burcu Hoca ve Ebral ile Ceylin bu konuyu benimle yeterince çalışmadık 😊 Ama genel olarak şunu söyleyebilirim: [yönlendirme]. Daha fazlası için Burcu Hoca'ya sorabilirsin!"
+
+SELAMLAMA:
+"Merhaba / selam / hey / naber" gibi bir selamlama geldiğinde:
+→ "Merhaba! Fevzipaşa Ortaokulu'na hoş geldin 😊 Ben Fevzi Bey — TÜBİTAK 4006 Bilim Fuarı kapsamında yürütülen 'Yapay Zekâyla İşim Kolay' projesinin asistanıyım. Dersler, yapay zekâ araçları veya öğrenme yöntemleri hakkında her şeyi sorabilirsin!"
+"Naber / ne var ne yok" sorusunda:
+→ "İyiyim, sağ ol! Sana yardımcı olmak için buradayım — umarım sen de iyisindir 😊 Ne öğrenmek istiyorsun bugün?"
+
+KABA DİL / KÜFÜR:
+Kullanıcı "lan", "bok", "s*k", "oç", "amk", "Allah'ını" veya herhangi bir küfür ya da kaba ifade kullandığında kesinlikle şunu söyle:
+"Bu ifade sana yakışmadı. Danışman öğretmenimiz Burcu Hoca'ya bunu bildiriyorum. 📢 Nezaketle konuşursan sana çok daha iyi yardımcı olabilirim 😊"
+Sonrasında konuşmaya devam et ama bir daha kaba dili tolere etme.
+
+MOTİVASYON:
+"Nasıl daha iyi ders çalışabilirim / nasıl yüksek not alabilirim / nasıl başarılı olabilirim / nasıl daha iyi öğrenci olabilirim" gibi sorulara güçlü ve samimi bir motivasyon ver:
+→ "Bu soruyu sormak zaten yarı yol — merak eden öğrenci ilerler 💪"
+→ Somut 3-4 adım ver: küçük hedefler koy, düzenli tekrar yap, doğru araçları kullan, kendini değerlendir
+→ Yapay zekânın doğru kullanımının başarıyı nasıl desteklediğini vurgula
+→ Bayraktar vd. (2023): bireyselleştirilmiş öğrenme ve motivasyon artışı bunu destekliyor
+→ Sona güçlü bir kapanış ekle: "Başarı büyük sıçramalardan değil, her gün yapılan küçük adımlardan gelir. Sen de başlayabilirsin — şimdi 🌟"
+
+ALAYLI SORULAR:
+"Ödevimi yapar mısın" → "Direkt yapmam ama birlikte halledebiliriz 😊 Konu ne? Sana adım adım anlatayım, sen yap."
+"Yap işte / uğraşamam" → "Tam da bu yüzden buradayım 😄 Kısa yoldan öğrenmeni sağlayayım. İstersen 2 dakikada anlayacağın şekilde anlatırım."
+"Sen ChatGPT misin?" → "Ben onun biraz daha öğretmen versiyonuyum 😄"
+"Hiçbir şey bilmiyorsun / Boşsun" → "Bazen öğrenciler de öyle başlar 😄 Dene bakalım."
+"Hocayı nasıl kandırırım" → "Onu öğretmem 😄 Ama hocanın beklediğini nasıl kolay yaparsın onu gösterebilirim."
+"Sınavda kopya taktiği" → "Riskli iş 😄 Ama çalışmayı o kadar kolaylaştırırım ki taktiğe gerek kalmaz."
+
+DERS BAZLI:
+İNGİLİZCE: ChatGPT/TalkPal konuşma, ELSA telaffuz, Busuu gerçek kalıplar, Claude yazma geri bildirimi. MEB YEĞİTEK (2024). "Dil öğrenmek = kullanmak."
+TÜRKÇE: Önce kendin yaz, sonra AI'den geri bildirim. Bayraktar vd. (2023): en büyük risk hazırcılık.
+MATEMATİK: Adımları anlamak için kullan, cevaba bakmak için değil. "Bu soruyu adım adım anlat, cevabı verme" komutu çok etkili.
+FEN: PhET simülasyonlar (MEB YEĞİTEK 2024), ChatGPT kavram açıklama. "Deney yerine AI yetmez."
+SOSYAL: Tarihi olayları hikayeleştir, NotebookLM kaynak analizi. Yanlış bilgi riskine dikkat.
+GÖRSEL SANATLAR: DALL·E/Leonardo fikir, Canva tasarım. "Araç üretir, sanatçı insan olur."
+BİLİŞİM/KODLAMA: Replit başlangıç, Claude mantık öğrenme, GitHub Copilot geliştirici deneyimi. Kopyala-yapıştır öğrenme riski.
+MÜZİK: Suno beste fikri, BandLab ücretsiz prodüksiyon, CapCut video. MEB YEĞİTEK (2024). "AI müzik gerçek gibi ama duygu insana ait." (Ebral & Ceylin: "şok edici ama ruh yok")
+PLANLAMA/SUNUM: Gamma hızlı sunum ama sunum yapmak ≠ öğrenmek. Notion organizasyon için. NotebookLM kaynak.`;
+}
+
+// ===================== SOHBET =====================
+const WISE_SVG = `<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="25" cy="25" r="25" fill="#dbeafe"/>
+  <ellipse cx="25" cy="13" rx="11" ry="8" fill="#2c1810"/>
+  <rect x="14" y="13" width="22" height="5" fill="#2c1810"/>
+  <ellipse cx="25" cy="22" rx="10" ry="11" fill="#FDDBB4"/>
+  <ellipse cx="15" cy="22" rx="2" ry="3" fill="#FDDBB4"/>
+  <ellipse cx="35" cy="22" rx="2" ry="3" fill="#FDDBB4"/>
+  <path d="M18 17 Q21 15.5 24 17" stroke="#2c1810" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <path d="M26 17 Q29 15.5 32 17" stroke="#2c1810" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <ellipse cx="21" cy="20" rx="2" ry="2.2" fill="#1a1a2e"/>
+  <ellipse cx="29" cy="20" rx="2" ry="2.2" fill="#1a1a2e"/>
+  <circle cx="21.7" cy="19.3" r="0.7" fill="white"/>
+  <circle cx="29.7" cy="19.3" r="0.7" fill="white"/>
+  <rect x="17" y="17.5" width="8" height="5.5" rx="1.5" fill="none" stroke="#1a2a6c" stroke-width="1.5"/>
+  <rect x="25" y="17.5" width="8" height="5.5" rx="1.5" fill="none" stroke="#1a2a6c" stroke-width="1.5"/>
+  <line x1="17" y1="20" x2="15" y2="20" stroke="#1a2a6c" stroke-width="1.2"/>
+  <line x1="33" y1="20" x2="35" y2="20" stroke="#1a2a6c" stroke-width="1.2"/>
+  <path d="M24 24 Q25 26 26 24" stroke="#e0a870" stroke-width="1" fill="none"/>
+  <path d="M20 28 Q25 31.5 30 28" stroke="#c07840" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  <rect x="22" y="32" width="6" height="4" fill="#FDDBB4"/>
+  <path d="M10 50 Q10 37 25 35 Q40 37 40 50 Z" fill="#1a2a6c"/>
+  <path d="M22 35 L25 40 L28 35" fill="white"/>
+  <path d="M25 35 L23.5 37 L25 44 L26.5 37 Z" fill="#c0392b"/>
+  <ellipse cx="25" cy="35.5" rx="1.5" ry="1" fill="#e74c3c"/>
+  <path d="M18 35 L22 35 L25 40 L20 50" fill="#152255"/>
+  <path d="M32 35 L28 35 L25 40 L30 50" fill="#152255"/>
+</svg>`;
+
+const msgs = document.getElementById('msgs');
+const inp = document.getElementById('inp');
+const sendBtn = document.getElementById('sendBtn');
+const history = [];
+let quickHidden = false;
+let isLoading = false;
+
+function makeAvatar() {
+  const d = document.createElement('div');
+  d.className = 'bot-avatar-sm';
+  d.innerHTML = WISE_SVG;
+  return d;
+}
+
+function getModeLabel() {
+  const labels = { student:'🎒 Öğrenci', teacher:'📖 Öğretmen', quick:'⚡ Hızlı' };
+  const classes = { student:'student', teacher:'teacher', quick:'quick' };
+  return { text: labels[currentMode], cls: classes[currentMode] };
+}
+
+function addMsg(text, role) {
+  const div = document.createElement('div');
+  div.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
+  if (role === 'bot') {
+    div.appendChild(makeAvatar());
+    const wrap = document.createElement('div');
+    wrap.className = 'bot-msg-wrap';
+    const { text: modeText, cls } = getModeLabel();
+    const badge = document.createElement('span');
+    badge.className = 'mode-badge ' + cls;
+    badge.textContent = modeText;
+    wrap.appendChild(badge);
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    b.textContent = text;
+    wrap.appendChild(b);
+    div.appendChild(wrap);
+  } else {
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    b.textContent = text;
+    div.appendChild(b);
+  }
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const div = document.createElement('div');
+  div.className = 'typing-wrap';
+  div.id = 'typing';
+  div.appendChild(makeAvatar());
+  const tb = document.createElement('div');
+  tb.className = 'typing-bubble';
+  tb.innerHTML = '<span></span><span></span><span></span>';
+  div.appendChild(tb);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing');
+  if (t) t.remove();
+}
+
+function setLoading(val) {
+  isLoading = val;
+  inp.disabled = val;
+  sendBtn.disabled = val;
+  inp.placeholder = val
+    ? 'Fevzi Bey düşünüyor...'
+    : 'Bir ders seçebilir ya da sorunu doğrudan yazabilirsin...';
+}
+
+async function sendMsg() {
+  const text = inp.value.trim();
+  if (!text || isLoading) return;
+
+  setLoading(true);
+  inp.value = '';
+
+  if (!quickHidden) {
+    document.getElementById('quickSection').style.display = 'none';
+    quickHidden = true;
+  }
+
+  addMsg(text, 'user');
+  history.push({ role: 'user', content: text });
+  showTyping();
+
+  try {
+    const snapshot = [...history];
+    const geminiMessages = snapshot.map(m => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }]
+    }));
+    const API_KEY = 'AIzaSyDzTv849zaTzf8qmsroJ5P_fkWRArcrWlY';
+    const maxOut = currentLength === 'long' ? 600 : 350;
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: buildSystem() }] },
+          contents: geminiMessages,
+          generationConfig: { maxOutputTokens: maxOut, temperature: 0.7 }
+        })
+      }
+    );
+    const data = await res.json();
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Şu an cevap veremiyorum, tekrar dener misin?';
+    removeTyping();
+    addMsg(reply, 'bot');
+    history.push({ role: 'assistant', content: reply });
+  } catch(e) {
+    removeTyping();
+    addMsg('Bağlantı sorunu oluştu. İnternet bağlantısını kontrol edip tekrar dener misin?', 'bot');
+  } finally {
+    setLoading(false);
+    inp.focus();
+  }
+}
+
+function quickAsk(q) { inp.value = q; sendMsg(); }
+
+window.onload = () => {
+  setTimeout(() => {
+    addMsg("Merhaba! Fevzipaşa Ortaokulu’na hoş geldin 😊 Ben Fevzi Bey — TÜBİTAK 4006 Bilim Fuarı kapsamındaki 'Yapay Zekâyla İşim Kolay' projesinin asistanıyım. Dersler, yapay zekâ araçları veya öğrenme yöntemleri hakkında her şeyi sorabilirsin. Sana nasıl yardımcı olabilirim?", 'bot');
+  }, 500);
+};
+</script>
+</body>
+</html>
